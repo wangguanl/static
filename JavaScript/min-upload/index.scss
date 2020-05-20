@@ -1,0 +1,99 @@
+body{
+    background: #fff;
+}
+.fileWrap{
+	height: 70px;
+	width: 70px;
+	border: 1px solid #ccc;
+	float: left;
+	margin-left: 16px;
+	margin-top:16px;
+	background: url('/static/images/plus.jpg') center / 60px 60px no-repeat;
+	position: relative;
+	overflow: hidden;
+}
+/* .fileWrap > input{
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+} */
+.fileWrap > div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+.webuploader-element-invisible{
+	height: 100%;
+	width: 100%;
+}
+
+.imgList{
+	float: left;
+}
+.imgList > li{
+	height: 70px;
+	width: 70px;
+	border: 1px solid #ccc;
+	float: left;
+	margin-left: 16px;
+	margin-top: 16px;
+	position: relative;
+}
+.imgList > li > img{
+	max-height: 100%;
+	max-width: 100%;
+}
+.imgList > li > .close{
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	display: none;
+}
+.imgList > li > .close:after{
+	content: '×';
+	height: 20px;
+	width: 20px;
+	line-height: 20px;
+	font-size: 20px;
+	display: block;
+	border-radius: 50%;
+	background: #999;
+	color: #fff;
+	text-align: center;
+}
+.imgList > li > .remark{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 24px;
+	line-height: 24px;
+	background: rgba(0,0,0,0.5);
+	text-align: center;
+	color: #fff;
+}
+.imgList > li > .loading{
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(0,0,0,0.5);
+}
+.donut {
+	border: 4px solid rgba(255, 255, 255, 0.5);
+    border-left-color: #7983ff;
+	opacity: 1;
+	transition: all 0.15s linear;
+}

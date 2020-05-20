@@ -1,0 +1,135 @@
+.erp-table{
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	overflow: hidden;
+	font-size: 12px;
+	table{
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		td, th{
+			&:last-child{
+				border-right: none;
+			}
+		}
+		.td{
+			box-sizing: border-box;
+		}
+		&.thead{
+			flex-shrink: 0;
+			box-sizing: border-box;
+			border-bottom: none !important;
+			th{
+				font-weight: normal;
+			}
+		}
+		&.tbody{
+			height: 100%;
+			.td{
+				width: 100%;
+				box-sizing: border-box;
+				padding: 0 10px;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			/*tr{
+				&:nth-child(odd){
+					background-color: #FAFAFA;
+				}
+			}*/
+			td{
+				padding: 8px 0;
+				text-align: center;
+				&.pre{
+					.td{
+						white-space: pre-wrap;
+					}
+				}
+			}
+		}
+		&.tfoot{
+			flex-shrink: 0;
+			text-align: center;
+			box-sizing: border-box;
+		}
+
+		%index{
+			width: 60px;
+		}
+		%name{
+			width: 80px;
+		}
+		%status{
+			width: 60px;
+		}
+		%date{
+			width: 82px;
+		}
+		%lang-date{
+			width: 135px;
+		}
+		&.thead{
+			th{
+				&.index{
+					@extend %index;
+				}
+				&.name{
+					@extend %name;
+				}
+				&.status{
+					@extend %status;
+				}
+				&.date{
+					@extend %date;
+				}
+				&.lang-date{
+					@extend %lang-date;
+				}
+			}
+		}
+		&.tbody, &.tfoot{
+			td{
+				&.index{
+					@extend %index;
+				}
+				&.name{
+					@extend %name;
+				}
+				&.status{
+					@extend %status;
+				}
+				&.date{
+					@extend %date;
+				}
+				&.lang-date{
+					@extend %lang-date;
+				}
+				&.left{
+					text-align: left;
+				}
+				&.right{
+					text-align: right;
+					.td{
+						padding-left: 0px;
+						padding-right: 6px;
+					}
+				}
+			}
+
+		}
+	}
+	& > .el-scrollbar{
+		flex: 1;
+		border-top: none;
+		height: 48px;
+		&.borderBottomNone{
+			border-bottom: none;
+		}
+		.el-scrollbar__wrap{
+			overflow-x: hidden;
+		}
+	}
+}

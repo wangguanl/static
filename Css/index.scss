@@ -1,0 +1,69 @@
+// 单行省略
+.c-text-ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+// 多行省略
+.c-moreline-ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+// 清除浮动
+.c-clearfix:after {
+	content: '';
+	height: 0;
+	width: 0;
+	display: block;
+	clear: both;
+}
+
+.c-flex {
+	display: flex;
+	&.center {
+		justify-content: center;
+		align-items: center;
+	}
+	&.between {
+		justify-content: space-between;
+	}
+	&.around {
+		justify-content: space-around;
+	}
+	&.evenly {
+		justify-content: space-evenly;
+	}
+	&.column {
+		flex-direction: column;
+		overflow: hidden;
+	}
+	&.justify-center {
+		justify-content: center;
+	}
+	&.items-center {
+		align-items: center;
+	}
+}
+.c-pre {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+.c-pointer {
+	cursor: pointer;
+}
+
+.c-fl {
+	float: left;
+}
+.c-fr {
+	float: right;
+}
+.c-hidden {
+	display: none;
+}
+.c-block {
+	display: block;
+}

@@ -9,7 +9,7 @@ var uploader = WebUploader.create({
 	swf: '/assets/libs/other/Uploader.swf',
 
 	// 文件接收服务端。
-	server: uploadUrl,
+	server: 'http://localhost:3000/upload',
 
 	pick: '#filePicker',
 	accept: {
@@ -132,7 +132,7 @@ uploader.on('uploadSuccess', function(file, res) {
 
 // 文件上传失败，显示上传出错。
 uploader.on('uploadError', function(file) {
-	alert('网络异常');
+	// alert('网络异常');
 	$('.imgList li[data-id="' + file.id + '"]').remove();
 });
 

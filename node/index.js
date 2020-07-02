@@ -1,21 +1,33 @@
 var express = require('express');
 var router = express.Router();
 var generateUUID = require('../public/utils/unique.js');
-const sharp = require('sharp'),
-	fs = require('fs'),
-	sypath = require('path'),
-	tinify = require("tinify");
+const Sharp = require('sharp'),
+	Tinify = require("tinify");
 
-tinify.key = "6Mf5s28SQC8yHydFMtSFcdpDFswd0ssd";
-
+Tinify.key = "6Mf5s28SQC8yHydFMtSFcdpDFswd0ssd";
 
 router.post('/upload', async function(req, res, next) {
 	try {
-		let data = await Promise.all(req.files.map(file => compress(file)))
+		let imgsMime = ['jpeg', 'jpg', 'png', 'webp'],
+			imgs = [],
+			others = [];
+		req.files.forEach((file) => {
+			let {
+				originalname
+			} = file;
+			if (imgsMime.indexOf(originalname.slice(originalname.lastIndexOf('.') + 1).toLocaleLowerCase()) != -1) {
+				imgs.push(file);
+			} else {
+				others.push(formatFile(file));
+			}
+		});
+
+		let imgsData = await Promise.all(imgs.map(file => sharpImg(file)))
+
 		res.send({
 			msg: '上传成功',
 			code: 200,
-			data
+			data: [...imgsData, ...others]
 		})
 	} catch (e) {
 		res.send({
@@ -26,76 +38,89 @@ router.post('/upload', async function(req, res, next) {
 	}
 });
 
-
-function compress(file) {
+function sharpImg(file) {
 	return new Promise(async (resolve, reject) => {
 
 		let {
 			filename,
-			mimetype,
 			path,
-			originalname
+
 		} = file;
 
-		let suffix = originalname.slice(originalname.lastIndexOf('.')).toLocaleLowerCase();
+		const Watermark = {
+			input: 'watermark.png',
+			gravity: 'southeast' // 从东南角，也就是右下角开始
+		};
 
+		const SharpImage = Sharp(path);
 
+		const ImgMeta = await SharpImage.metadata(); // 图片元信息
 
-		let uploadPath = 'upload/',
-			watermark_file_url = uploadPath + 'watermark_' + filename,
-			min_file_url = uploadPath + 'min_' + filename,
+		// 解决orientation方向错误的问题，并生成图片Buffer
+		const ImgBuffer = await SharpImage.rotate().toBuffer();
+
+		// 生成水印图片Buffer
+		const ImgCopositeBuffer = await Sharp(ImgBuffer).composite([Watermark]).toBuffer();
+
+		// 生成裁剪图片加水印Buffer
+		const ImgResizeBuffer = await Sharp(ImgBuffer).resize({
+			width: 200,
+			height: 150
+		}).composite([Watermark]).toBuffer();
+
+		let toFiles = [],
+			uploadPath = 'upload/',
+			file_url = uploadPath + 'min_' + filename,
 			thumbnail_file_url = uploadPath + 'thumbnail_' + filename;
 
-		await sharp(path)
-			.composite([{
-				input: 'watermark.png',
-				gravity: 'southeast' // 从东南角，也就是右下角开始
-			}])
-			.toBuffer()
-			.then(async watermarkBuffer => {
-				// console.log(watermarkBuffer)
-				const sendData = {
-					uid: generateUUID(),
-					file_name: originalname,
-					suffix
-				}
+		let {
+			format,
+			size,
+			width,
+			height
+		} = ImgMeta;
 
-				// tinify仅压缩JPG和PNG两种格式
-				if (['jpeg', 'jpg', 'png'].indexOf(suffix.substr(1))) {
+		// Tinify仅压缩JPG和PNG两种格式
+		if (['jpeg', 'jpg', 'png'].indexOf(format) != -1) {
+			toFiles = [
+				Tinify.fromBuffer(ImgCopositeBuffer).toFile(file_url), // 保存水印图片
+				Tinify.fromBuffer(ImgResizeBuffer).toFile(thumbnail_file_url), // 保存裁剪水印图片
+			]
+		} else {
+			toFiles = [
+				Sharp(ImgCopositeBuffer).toFile(file_url), // 保存水印图片
+				Sharp(ImgResizeBuffer).toFile(thumbnail_file_url), // 保存裁剪水印图片
+			]
+		}
 
-					try {
-						await tinify.fromBuffer(watermarkBuffer).toFile(min_file_url);
-						await tinify.fromFile(min_file_url).resize({
-							method: "thumb",
-							width: 200,
-							height: 150
-						}).toFile(thumbnail_file_url);
 
-						resolve(Object.assign({
-							file_url: min_file_url,
-							thumbnail_file_url,
-						}, sendData))
-					} catch (e) {
-						reject(e);
-					}
-
-				} else {
-					fs.writeFile(watermark_file_url, watermarkBuffer, function(err) {
-						if (err) {
-							reject(err)
-						} else {
-							resolve(Object.assign({
-								file_url: watermark_file_url,
-								thumbnail_file_url: watermark_file_url,
-							}, sendData))
-						}
-					})
-				}
-			}).catch(e => reject(e))
+		Promise.all(toFiles).then(data => resolve(formatFile(file, {
+			file_url,
+			thumbnail_file_url,
+			file_meta: {
+				format,
+				size,
+				width,
+				height
+			}
+		}))).catch(e => reject(e));
 
 	})
 }
 
+function formatFile(file, obj = {}) {
+	let file_name = file.originalname,
+		path = file.path,
+		suffix = file_name.slice(file_name.lastIndexOf('.') + 1).toLocaleLowerCase()
+	return Object.assign({
+		uid: generateUUID(),
+		file_meta: {},
+		file_name,
+		file_url: path,
+		thumbnail_file_url: path,
+		suffix
+	}, obj);
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

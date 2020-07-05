@@ -3,13 +3,21 @@
 	<head>
 		<meta charset="utf-8">
 		<title></title>
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<style>
+			img{
+				max-width: 100%;
+			}
+		</style>
 	</head>
 	<body>
 		<input type="file" multiple="" id="upload">
 	</body>
 
 	<script>
-		document.getElementById("upload").onchange = function() {
+		var upload = document.getElementById("upload");
+		var ip = 'http://192.168.31.10:9999/'
+		upload.onchange = function() {
 
 			var fileBuffer = new FormData();
 
@@ -18,16 +26,25 @@
 			var xhr = new XMLHttpRequest();
 
 			//设置请求的类型及url
-			xhr.open('post', 'http://localhost:3000/upload', true);
+			xhr.open('post', ip + 'upload', true);
 
 			//发送请求
 			xhr.send(fileBuffer);
 
+			var data = [];
+
 			xhr.onreadystatechange = () => {
 				if (xhr.readyState == 4 && xhr.status == 200) {
-					var res = JSON.parse((xhr.responseText).replace(/\\/g, '/').replace(/\/\//g, '/'));
-					console.log(res);
+					data = JSON.parse((xhr.responseText).replace(/\\/g, '/').replace(/\/\//g, '/'));
 				}
+				upload.value = '';
+			}
+			xhr.onloadend = () => {
+				data.result.forEach(val => {
+					var img = document.createElement('img');
+					img.src = ip + val.thumbnail_file_url;
+					document.body.appendChild(img);
+				})
 			}
 
 		}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<input type="text" value="" id="input">
+		<button id="btn">按钮</button>
+		<div id="msgBox"></div>
+		<script src="./jquery.js"></script>
+		<script src="./socket.io.js"></script>
+		<script>
+			const ip = 'http://192.168.12.43:3000';
+			const websocket = io.connect(ip, {
+				path: '/test'
+			});
+			console.log(websocket)
+			websocket.on('connectSuccess', function(msg) {
+				$('#msgBox').append(`<div>${msg}</div>`);
+			})
+
+
+			const chatWebsocket = io.connect(ip + '/chat');
+			$("#btn").on('click', function() {
+				chatWebsocket.send('hi');
+				// 回调
+				chatWebsocket.emit('chatMessage', $("#input").val() || Math.random(), msg => {
+					console.log('已发送成功:' + msg)
+				})
+			})
+			chatWebsocket.on('chatIn', ({
+				type
+			}) => {
+				let msg = '';
+				if (type === 'all') {
+					msg = '已进入（所有人可以看到）'
+				} else if (type === 'only') {
+					msg = '已进入（只有自己可以看到）'
+				} else if (type === 'only') {
+					msg = '已进入（其他人可以看到）'
+				}
+				$('#msgBox').append(`<div>${msg}</div>`);
+			})
+			chatWebsocket.on('chatOut', msg => {
+				$('#msgBox').append(`<div>${msg}</div>`);
+			})
+			chatWebsocket.on('chatMessage', ({
+				msg,
+				type
+			}) => {
+				$('#msgBox').append(`<div>${type} - ${msg}</div>`);
+			})
+
+			const checkWebsocket = io.connect(ip + '/check');
+
+			checkWebsocket.on('checkStatus', msg => {
+				// console.log(msg)
+				alert(msg)
+				// $('#msgBox').append(`<div>${msg}</div>`);
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="cn">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- <div style="height: 200px; margin: 20px; background: red;"></div>
+		<div style="height: 200px; margin: 20px; background: blue;"></div> -->
+		<script>
+			function a(x) {
+				var sum = 3;
+				return function (y) {
+					console.log(x + y + (++sum))
+				}
+			}
+			var b = a(2);
+			b(1);
+			// b(1);
+			
+			/*原型： {
+				Object.defineProperty //设置 configurable、enumerable、writable、value、getter、setter
+				Object.defineProperties //设置多个 configurable、enumerable、writable、value、getter、setter
+
+				Object.getOwnPropertyDescriptor // 获取单个对象的configurable、enumerable、writable、value、getter、setter
+				Object.getOwnPropertyDescriptors // 获取对象的全部属性
+
+				Person.prototype.isPrototypeOf(p1(实例))	// 判断实例是否属于此原型 
+				Object.hasPrototypeOf(p1(实例))	// 获取到实例的原型 对比 Person.prototype (相当于p1.__proto__)
+
+				obj.hasOwnProperty('type')	// 在实例上是否可以找到属性
+				obj.hasPrototypeProperty('type')	// 在原型(prototype)上是否可以找到属性，前提是实例上不存在
+			}*/
+
+
+			function Person(info) {
+				let {
+					name,
+					age
+				} = info;
+				this.name = name;
+				this.age = age;
+				this.sayHello = function() {
+					return this.sayName()
+					// console.log()
+				}
+				/*this.sayName = function () {
+					console.log('name')
+				}*/
+			}
+
+			/*Person.prototype.sayName = function () {
+				console.log(this.name)
+			}*/
+			Person.prototype = {
+				// constructor: Person,
+				sayName: function() {
+					console.log(this.name)
+				}
+			}
+
+
+			Object.defineProperty(Person.prototype, 'constructor', {
+				enumerable: false,
+				value: Person
+			})
+
+			// console.log(Object.keys(Person.prototype))
+
+			var p1 = new Person({
+				name: 'wang',
+				age: 23
+			});
+			var p2 = new Person({
+				name: 'gang',
+				age: 23
+			});
+			console.log(p1.sayHello())
+			// console.log(p1.__proto__)
+			// console.log(Object.keys(p1.__proto__))
+			/*for(let i in p1.__proto__){
+				console.log(i)
+			}*/
+
+			/*p1.sayName = function () {
+					console.log('name')
+				}
+				console.log(p1)
+			console.log(p1.sayName === p2.sayName)*/
+			// console.log(Person.prototype.isPrototypeOf(p1))
+			// console.log(Object.getPrototypeOf(p1) === p1.__proto__)
+			/*console.log(Person.prototype)
+			console.log(Person.__proto__)
+			console.log(Person.constructor)
+
+			console.log(p1 == p2)
+			console.log(p1.constructor == p2.constructor)
+			console.log(p1.sayName === p2.sayName)
+			console.log(p1.sayHello === p2.sayHello)
+			console.log(p1.age === p2.age)*/
+
+
+
+
+			// console.log(p1, p2)
+
+
+			/* 	function () {
+					return {
+						a:123,
+						b:456
+					}
+				} */
+
+			/* var obj = {
+				arr: [123],
+			}
+			var brr = {
+				arr2: [456]
+			}
+			var a = window;
+			var b = Object.assign({}, window);
+			// console.log(a === b)
+			console.log(obj.arr instanceof a.Array)
+			console.log(obj.arr instanceof b.Array) */
+			// console.log(brr.arr2 instanceof Array)
+
+			/* `use strict`
+			
+			
+			var obj = {
+				firstName: 'gang',
+				lastName: 'wang',
+				age: 23,
+				hair: 'short'
+			};
+			console.log(Object.getOwnPropertyDescriptors(obj, 'hair'))
+			Object.defineProperty(obj, 'hair', {
+				enumerable: false,
+				configurable: false,
+				writable: false,
+				value: 'long'
+			})
+			for (let i in obj){
+				console.log(i)
+			}
+			delete obj.hair;
+			obj.hair = 123;
+			console.log(obj.hair) */
+
+			/* configurable  是否可删除
+			
+			Emumerable 是否可被for-in循环到
+			
+			writable 是否可以改写 
+			
+			value  默认的值 */
+
+
+			var person = new Object();
+
+			console.log(person)
+
+
+
+			function People(name) {
+				this.name = name;
+				//对象方法
+				this.Introduce = function() {
+					alert("My name is " + this.name);
+				}
+			}
+			//类方法
+			People.Run = function() {
+				alert("I can run");
+			}
+			//原型方法
+			People.prototype.IntroduceChinese = function() {
+				alert("我的名字是" + this.name);
+			}
+
+
+
+			//测试
+
+			// var p1 = new People("Windking");
+			/* console.log(p1)
+			console.log(p1.Run)
+			console.log(p1) */
+			console.log(People.__proto__)
+			console.log(People.constructor)
+			console.log(People.prototype)
+
+
+
+			/* p1.Introduce();
+
+			People.Run();
+
+			p1.IntroduceChinese(); */
+
+
+			// console.log(sum)
+			/* function sum () {
+				console.log(456)
+			} */
+			/* var sum = function () {
+				console.log(123)
+			} */
+			/* var obj = String('123123');
+			obj.a = 456;
+			console.log(obj)
+			console.log(obj.a)
+			console.log(obj instanceof String)
+			console.log(obj instanceof Object)
+			console.log(typeof obj)
+			console.log(obj.constructor)
+			console.log(obj.__proto__)
+			console.log(obj.__proto__.prototype)
+			console.log(obj.prototype)
+			
+			
+			console.log(String.constructor) */
+			/* var a= {a:123};
+			// var a= 123;
+			var b = a;
+			a.b=456
+			console.log(a)
+			console.log(b)
+			a= null;
+			console.log(a)
+			console.log(b) */
+			/* var obj = {
+				a: () => {
+					console.log(this)
+				},
+				b() {
+					console.log(this)
+				},
+			}
+			
+			obj.a();
+			obj.b(); */
+			/*var a = 10;
+			(function () {
+				var a = b = 5;
+			})();
+
+			console.log(a, b)*/
+
+			/* var mult = (function() {
+				var cache = {};
+				var calculate = function(arguments) { // 封闭 calculate 函数
+
+					var a = 1;
+					for (var i = 0, l = arguments.length; i < l; i++) {
+						a = a * arguments[i];
+					};
+					return a;
+				}
+
+				return function() {
+					var args = Array.prototype.join.call(arguments, ',');
+					if (args in cache) {
+						return cache[args];
+					}
+
+					console.log(cache)
+					// return cache[ args ] = calculate.apply( null, arguments );
+					// return cache[ args ] = calculate.call( this, ...arguments );
+					return cache[args] = calculate(arguments);
+				}
+			})();
+
+			console.log(mult(1, 2, 3));
+			console.log(mult(1, 2, 3));
+			console.log(mult(1, 2, 3, 4));
+			console.log(mult(1, 2, 3, 4, 5)); */
+
+
+			/* var currying = function(fn) {
+				var args = [];
+				return function() {
+					if (arguments.length === 0) {
+						return fn.apply(this, args);
+					} else {
+						Array.prototype.push.apply(args, arguments);
+						return arguments.callee;
+					}
+				}
+			};
+			var cost = (function() {
+				var money = 0;
+				return function() {
+					for (var i = 0; i < arguments.length; i++) {
+						money += arguments[i];
+					}
+					return money;
+				}
+			})();
+			var calcMoney = currying(cost); // 转化成 currying 函数
+			calcMoney(100); // 未真正求值
+			calcMoney(200); // 未真正求值
+			calcMoney(300); // 未真正求值 
+			console.log(calcMoney()); // 求值并输出:600 */
+
+			/*var CreateDiv = function(html) {
+				this.html = html;
+				this.init();
+			};
+			CreateDiv.prototype.init = function() {
+				var div = document.createElement('div');
+				div.innerHTML = this.html;
+				document.body.appendChild(div);
+			};
+			var ProxySingletonCreateDiv = (function() {
+				var instance;
+				return function(html) {
+					if (!instance) {
+						instance = new CreateDiv(html);
+					}
+					return instance;
+				}
+			})();
+
+			// new CreateDiv('sven1')
+			// new CreateDiv('sven2')
+			var a = new ProxySingletonCreateDiv('sven1');
+			var b = new ProxySingletonCreateDiv('sven2');
+			// alert(a === b); //true*/
+
+
+			function* helloWorldGenerator() {
+				yield 'hello';
+				yield 'world';
+				return 'ending';
+			}
+
+			var hw = helloWorldGenerator();
+
+
+			function* demo() {
+				// console.log('Hello' + yield); // SyntaxError
+				// console.log('Hello' + yield 123); // SyntaxError
+				yield
+				console.log('Hello' + (yield)); // OK
+				console.log('Hello' + (yield 123)); // OK
+			}
+			var d = demo();
+			console.log(d.next())
+			console.log(d.next())
+			console.log(d.next())
+			console.log(d.next())
+		</script>
+	</body>
+</html>

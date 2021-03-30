@@ -1,5 +1,3 @@
-
-
 let timer;
 // 防抖节流函数
 export function scroll(option) {

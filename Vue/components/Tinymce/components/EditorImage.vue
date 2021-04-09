@@ -1,111 +1,58 @@
 <template>
-	<div class="upload-container">
-		<el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
-			upload
-		</el-button>
-		<el-dialog :visible.sync="dialogVisible">
-			<el-upload
-				:multiple="true"
-				:file-list="fileList"
-				:show-file-list="true"
-				:on-remove="handleRemove"
-				:on-success="handleSuccess"
-				:before-upload="beforeUpload"
-				class="editor-slide-upload"
-				action="https://httpbin.org/post"
-				list-type="picture-card"
-			>
-				<el-button size="small" type="primary">
-					Click upload
-				</el-button>
-			</el-upload>
-			<el-button @click="dialogVisible = false">
-				Cancel
-			</el-button>
-			<el-button type="primary" @click="handleSubmit">
-				Confirm
-			</el-button>
-		</el-dialog>
-	</div>
+  <div>
+    <el-button
+      :style="{ background: color, borderColor: color }"
+      icon="el-icon-upload"
+      size="mini"
+      type="primary"
+      @click="dialogVisible = true"
+      >上传图片
+    </el-button>
+    <el-dialog width="670px;" title="上传图片" :visible.sync="dialogVisible">
+      <com-upload-pic ref="uploadPic" v-model="fileList"></com-upload-pic>
+      <div style="display: flex; justify-content: flex-end; margin-top: 12px">
+        <el-button type="primary" @click="onSubmit"> 确定 </el-button>
+        <el-button @click="onCloseDialog"> 关闭 </el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-// import { getToken } from 'api/qiniu'
-
+import comUploadPic from "@/components/upload/uploadPic";
 export default {
-	name: 'EditorSlideUpload',
-	props: {
-		color: {
-			type: String,
-			default: '#1890ff'
-		}
-	},
-	data() {
-		return {
-			dialogVisible: false,
-			listObj: {},
-			fileList: []
-		}
-	},
-	methods: {
-		checkAllSuccess() {
-			return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
-		},
-		handleSubmit() {
-			const arr = Object.keys(this.listObj).map(v => this.listObj[v])
-			if (!this.checkAllSuccess()) {
-				this.$message('Please wait for all images to be uploaded successfully. If there is a network problem, please refresh the page and upload again!')
-				return
-			}
-			this.$emit('successCBK', arr)
-			this.listObj = {}
-			this.fileList = []
-			this.dialogVisible = false
-		},
-		handleSuccess(response, file) {
-			const uid = file.uid
-			const objKeyArr = Object.keys(this.listObj)
-			for (let i = 0, len = objKeyArr.length; i < len; i++) {
-				if (this.listObj[objKeyArr[i]].uid === uid) {
-					this.listObj[objKeyArr[i]].url = response.files.file
-					this.listObj[objKeyArr[i]].hasSuccess = true
-					return
-				}
-			}
-		},
-		handleRemove(file) {
-			const uid = file.uid
-			const objKeyArr = Object.keys(this.listObj)
-			for (let i = 0, len = objKeyArr.length; i < len; i++) {
-				if (this.listObj[objKeyArr[i]].uid === uid) {
-					delete this.listObj[objKeyArr[i]]
-					return
-				}
-			}
-		},
-		beforeUpload(file) {
-			const _self = this
-			const _URL = window.URL || window.webkitURL
-			const fileName = file.uid
-			this.listObj[fileName] = {}
-			return new Promise((resolve, reject) => {
-				const img = new Image()
-				img.src = _URL.createObjectURL(file)
-				img.onload = function() {
-					_self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
-				}
-				resolve(true)
-			})
-		}
-	}
-}
+  name: "EditorSlideUpload",
+  props: {
+    color: {
+      type: String,
+      default: "#1890ff",
+    },
+  },
+  data() {
+    return {
+      dialogVisible: false,
+      fileList: [],
+    };
+  },
+  methods: {
+    onSubmit() {
+      if (!this.fileList.length) {
+        this.$message.warning("请上传图片");
+      } else if (!this.$refs.uploadPic.useCheckUploadStatus()) {
+        this.$message.warning("文件正在上传，请稍等");
+      } else {
+        this.$emit("successCBK", this.fileList);
+        this.onCloseDialog();
+      }
+    },
+    onCloseDialog() {
+      this.dialogVisible = false;
+      this.fileList = [];
+      this.$refs.uploadPic.useClearFiles();
+    },
+  },
+  components: {
+    comUploadPic,
+  },
+};
 </script>
-
-<style lang="scss" scoped>
-.editor-slide-upload {
-	margin-bottom: 20px;
-	/deep/ .el-upload--picture-card {
-		width: 100%;
-	}
-}
-</style>

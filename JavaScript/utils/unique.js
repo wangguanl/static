@@ -12,7 +12,7 @@ var Base64 = {
 		'w', 'x', 'y', 'z', '0', '1', '2', '3',
 		'4', '5', '6', '7', '8', '9', '+', '/'
 	],
-	UTF16ToUTF8: function(str) {
+	UTF16ToUTF8: function (str) {
 		var res = [],
 			len = str.length;
 		for (var i = 0; i < len; i++) {
@@ -60,7 +60,7 @@ var Base64 = {
 
 		return res.join('');
 	},
-	UTF8ToUTF16: function(str) {
+	UTF8ToUTF16: function (str) {
 		var res = [],
 			len = str.length;
 		var i = 0;
@@ -102,7 +102,7 @@ var Base64 = {
 
 		return res.join('');
 	},
-	encode: function(str) {
+	encode: function (str) {
 		if (!str) {
 			return '';
 		}
@@ -135,7 +135,7 @@ var Base64 = {
 
 		return res.join('');
 	},
-	decode: function(str) {
+	decode: function (str) {
 		if (!str) {
 			return '';
 		}
@@ -170,7 +170,7 @@ var Base64 = {
 };
 function generateUUID() {
 	var d = new Date().getTime();
-	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 		var r = (d + Math.random() * 16) % 16 | 0;
 		d = Math.floor(d / 16);
 		return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);

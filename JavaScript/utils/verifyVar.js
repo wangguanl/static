@@ -4,7 +4,7 @@
 	[, isType], 判断variable参数类型
 	来自用户传输的内容都必须验证类型
  */
-let verifyVar = (variable, isType) => {
+export default (variable, isType) => {
 	// 变量类型
 	const variableType = {
 		'[object String]': 'string',
@@ -22,11 +22,7 @@ let verifyVar = (variable, isType) => {
 	};
 
 	// 类型
-	let type = variableType[ Object.prototype.toString.call(variable) ];
-
-	let result = variableType[ Object.prototype.toString.call(isType) ] === 'string' ? type === isType.replace(/\s+/g, '').toLocaleLowerCase() : type;
-
-	return result;
+	let type = variableType[Object.prototype.toString.call(variable)];
+	return variableType[Object.prototype.toString.call(isType)] === 'string' ? type === isType.replace(/\s+/g, '').toLocaleLowerCase() : type;
 }
 
-export default verifyVar;

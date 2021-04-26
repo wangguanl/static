@@ -10,13 +10,15 @@
 
 1. abstract 抽象类
 
-2. **declare** 
+2. implements
 
-3. 断言
+3. **declare** 
+
+4. 断言
 
    - ##### 1.“尖括号” 语法
      ```javascript
-     let someValue: any = "this is a string";
+      let someValue: any = "this is a string";
      let strLength: number = (<string>someValue).length;
      ```
 
@@ -62,7 +64,7 @@
    }
      ```
 
-4. 类型守卫
+5. 类型守卫
 
 
 

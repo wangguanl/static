@@ -1,0 +1,70 @@
+<script>
+	function shallowReadonly(obj) {
+		return shallowReactive(obj, true);
+	}
+
+	function shallowRef(value) {
+		return shallowReactive({
+			value
+		})
+	}
+
+	function shallowReactive(obj, readOnly) {
+		return new Proxy(obj, {
+			get(target, key) {
+				console.log('获取', target, key)
+				return target[key]
+			},
+			set(target, key, value) {
+				console.log('设置', value)
+
+				return !readOnly && (target[key] = value)
+			}
+		})
+	}
+
+	function shallowRef(value) {
+		return shallowReactive({
+			value
+		})
+	}
+
+	function reactive(obj, readOnly) {
+		if (typeof obj === 'object') {
+			// 将obj对象深度递归转为proxy
+			if (Array.isArray(obj)) {
+				obj.forEach((item, index) => (typeof item === 'object' && (obj[index] = reactive(item))))
+			} else if (Object.prototype.toString.call(obj) === '[object Object]') {
+				for (let k in obj) {
+					typeof obj[k] === 'object' && (obj[k] = reactive(obj[k]));
+				}
+			}
+
+			// 代理对象
+			return new Proxy(obj, {
+				get(target, key) {
+					return target[key]
+				},
+				set(target, key, value) {
+					// 监听代理对象的变化
+					return !readOnly && (target[key] = (typeof value === 'object' ? reactive(value) : value))
+				}
+			})
+		}
+		return obj
+	}
+
+	function readonly(obj) {
+		return reactive(obj, true)
+	}
+
+	function ref(value) {
+		return reactive({
+			value
+		})
+	}
+
+	function isProxy(obj) {
+		return ''
+	}
+</script>

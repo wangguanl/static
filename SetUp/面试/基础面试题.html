@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			// 指针作用域
+			var handler = function() {
+				// this.num = 3;
+				(function() {
+					console.log(this.num)
+				})();
+				console.log(this.num)
+			}
+			var num = 1;
+			var obj = {
+				num: 2,
+				handler
+			}
+
+			handler()
+			handler.apply(obj)
+			obj.handler()
+		</script>
+	</body>
+</html>
